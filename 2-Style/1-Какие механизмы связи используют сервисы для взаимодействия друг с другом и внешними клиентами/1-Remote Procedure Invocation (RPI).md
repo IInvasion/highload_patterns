@@ -17,7 +17,38 @@
 Одним из примеров технологий RPI является `RegistrationServiceProxy`, написанный на Scala, который делает REST-запросы с использованием `RestTemplate` из Spring Framework.
 
 ```
-@Component class RegistrationServiceProxy @Autowired()(restTemplate: RestTemplate) extends RegistrationService { @Value("${user_registration_url}") var userRegistrationUrl: String = _ @HystrixCommand(commandProperties=Array(new HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds", value="800"))) override def registerUser(emailAddress: String, password: String): Either[RegistrationError, String] = { try { val response = restTemplate.postForEntity(userRegistrationUrl, RegistrationBackendRequest(emailAddress, password), classOf[RegistrationBackendResponse]) response.getStatusCode match { case HttpStatus.OK => Right(response.getBody.id) } } catch { case e: HttpClientErrorException if e.getStatusCode == HttpStatus.CONFLICT => Left(DuplicateRegistrationError) } } }
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
+import org.springframework.stereotype.Component
+import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.client.RestTemplate
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand
+
+@Component
+class RegistrationServiceProxy @Autowired() (restTemplate: RestTemplate) extends RegistrationService {
+
+  @Value("${user_registration_url}")
+  var userRegistrationUrl: String = _
+
+  @HystrixCommand(commandProperties = Array(new HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "800")))
+  override def registerUser(emailAddress: String, password: String): Either[RegistrationError, String] = {
+    try {
+      val response = restTemplate.postForEntity(
+        userRegistrationUrl,
+        RegistrationBackendRequest(emailAddress, password),
+        classOf[RegistrationBackendResponse]
+      )
+
+      response.getStatusCode match {
+        case HttpStatus.OK => Right(response.getBody.id)
+      }
+    } catch {
+      case e: HttpClientErrorException if e.getStatusCode == HttpStatus.CONFLICT =>
+        Left(DuplicateRegistrationError)
+    }
+  }
+}
 ```
 
 ## Результирующий контекст

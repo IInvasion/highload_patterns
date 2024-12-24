@@ -17,7 +17,19 @@
 Примером приложения, использующего клиентскую службу обнаружения, является **Microservices Example**, написанное на Scala с использованием Spring Boot и Spring Cloud. Оно включает в себя реализацию **Eureka** как реестра сервисов.
 
 ```
-@SpringBootApplication @EnableEurekaServer public class EurekaServer { public static void main(String[] args) { new SpringApplicationBuilder(EurekaServer.class).web(true).run(args); } }
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+@SpringBootApplication
+@EnableEurekaServer
+public class EurekaServer {
+
+    public static void main(String[] args) {
+        // Запуск сервера Eureka
+        SpringApplication.run(EurekaServer.class, args);
+    }
+}
 ```
 
 Другие примеры технологий, используемых в качестве реестров сервисов, включают Kubernetes, Marathon и AWS ELB.

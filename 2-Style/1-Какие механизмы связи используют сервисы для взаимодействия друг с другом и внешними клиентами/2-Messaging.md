@@ -23,7 +23,29 @@
 В приложении FTGO `OrderService` публикует событие `Order Created` при создании заказа:
 
 ```
-public class OrderService { public Order createOrder(long consumerId, long restaurantId, List<MenuItemIdAndQuantity> lineItems) { // Логика создания заказа orderAggregateEventPublisher.publish(order, orderAndEvents.events); // Дополнительная логика return order; } }
+import java.util.List;
+
+public class OrderService {
+
+    private final OrderAggregateEventPublisher orderAggregateEventPublisher;
+
+    // Конструктор для внедрения зависимости
+    public OrderService(OrderAggregateEventPublisher orderAggregateEventPublisher) {
+        this.orderAggregateEventPublisher = orderAggregateEventPublisher;
+    }
+
+    public Order createOrder(long consumerId, long restaurantId, List<MenuItemIdAndQuantity> lineItems) {
+        // Логика создания заказа
+        Order order = new Order(consumerId, restaurantId, lineItems);
+        
+        // Публикация событий заказа
+        orderAggregateEventPublisher.publish(order, order.getEvents());
+        
+        // Дополнительная логика (например, сохранение заказа в базе данных)
+        
+        return order; // Возврат созданного заказа
+    }
+}
 ```
 
 ## Результирующий контекст

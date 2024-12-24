@@ -23,7 +23,17 @@
 Примером приложения с саморегистрацией является **Microservices Example**, написанное на Scala с использованием Spring Boot и Spring Cloud. Оно использует **Eureka Service Registry** как компонент Netflix OSS. Регистрация сервиса настраивается с помощью аннотации `@EnableEurekaClient` в конфигурационном классе Java:
 
 ```
-@Configuration @EnableEurekaClient class EurekaClientConfiguration {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+
+@SpringBootApplication
+@EnableEurekaClient
+public class EurekaClientApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaClientApplication.class, args);
+    }
+}
 ```
 
 Эта аннотация позволяет экземпляру сервиса зарегистрироваться в Eureka.

@@ -32,19 +32,40 @@
 ## Конфигурация зависимостей в `build.gradle`:
 
 ```
-dependencies { compile "org.springframework.cloud:spring-cloud-sleuth-stream" compile "org.springframework.cloud:spring-cloud-starter-sleuth" compile "org.springframework.cloud:spring-cloud-stream-binder-rabbit" }
+dependencies {
+    compile "org.springframework.cloud:spring-cloud-sleuth-stream"
+    compile "org.springframework.cloud:spring-cloud-starter-sleuth"
+    compile "org.springframework.cloud:spring-cloud-stream-binder-rabbit"
+}
 ```
 
 ## Пример конфигурации `docker-compose.yml`:
 
 ```
-environment: SPRING_RABBITMQ_HOST: rabbitmq SPRING_SLEUTH_ENABLED: "true" SPRING_SLEUTH_SAMPLER_PERCENTAGE: 1 SPRING_SLEUTH_WEB_SKIPPATTERN: "/api-docs.*|/autoconfig|/configprops|/dump|/health|/info|/metrics.*|/mappings|/trace|/swagger.*|.*\\.png|.*\\.css|.*\\.js|/favicon.ico|/hystrix.stream"
+environment:
+  SPRING_RABBITMQ_HOST: rabbitmq
+  SPRING_SLEUTH_ENABLED: "true"
+  SPRING_SLEUTH_SAMPLER_PERCENTAGE: 1
+  SPRING_SLEUTH_WEB_SKIPPATTERN: "/api-docs.*|/autoconfig|/configprops|/dump|/health|/info|/metrics.*|/mappings|/trace|/swagger.*|.*\\.png|.*\\.css|.*\\.js|/favicon.ico|/hystrix.stream"
+
 ```
 
 ## Пример сервера Zipkin:
 
 ```
-@SpringBootApplication @EnableZipkinStreamServer public class ZipkinServer { public static void main(String[] args) { SpringApplication.run(ZipkinServer.class, args); } }
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.zipkin.server.EnableZipkinServer;
+
+@SpringBootApplication
+@EnableZipkinServer
+public class ZipkinServer {
+
+    public static void main(String[] args) {
+        // Launch the Zipkin server
+        SpringApplication.run(ZipkinServer.class, args);
+    }
+}
 ```
 
 Сервер Zipkin развертывается с использованием Docker.
